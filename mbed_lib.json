@@ -1,0 +1,9 @@
+{
+  "name": "SHTC3",
+  "config": {
+    "timeout": {
+      "help": "Timeout for measurement (ms)",
+      "value": 20
+    }
+  }
+}
