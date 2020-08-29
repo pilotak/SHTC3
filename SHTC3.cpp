@@ -64,7 +64,7 @@ bool SHTC3::init(I2C *i2c_obj) {
     }
 
     // check CRC
-    if (!checkCRC(data, 3)) {
+    if (!checkCRC(data, sizeof(data))) {
         return false;
     }
 
