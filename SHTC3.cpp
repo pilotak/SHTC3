@@ -130,6 +130,12 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     temp = (data[3] << 8) | data[4];
 
 END:
+
+    // in case of failure, set invalid result
+    if (!ret) {
+        temp = humidity = USHRT_MAX;
+    }
+
     // sleep now
     sendCmd(CMD_SLEEP);
     return ret;
