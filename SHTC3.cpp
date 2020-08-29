@@ -59,6 +59,7 @@ bool SHTC3::init(I2C *i2c_obj) {
 
     // read ID
     if (!get_data(data, sizeof(data))) {
+        tr_error("Read ID failed");
         return false;
     }
 
@@ -97,6 +98,10 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
         goto END;
     }
 
+    if (!low_power) {
+        ThisThread::sleep_for(10ms);
+    }
+
     // read results
     for (; i < MBED_CONF_SHTC3_TIMEOUT; i++) { // safety timeout
         if (get_data(data, sizeof(data))) {
@@ -119,10 +124,10 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
         goto END;
     }
 
-    // if we reached to here, then it's a success
+    // if we reached up to here, it's a success
     ret = true;
-    humidity = data[0] | data[1];
-    temp = data[3] | data[4];
+    humidity = (data[0] << 8) | data[1];
+    temp = (data[3] << 8) | data[4];
 
 END:
     // sleep now
@@ -175,9 +180,10 @@ bool SHTC3::get_data(char *data, size_t len) {
     _i2c->unlock();
 
     if (ack != 0) {
-        tr_error("Read failed");
         return false;
     }
+
+    tr_debug("Read data(%u): %s", len, tr_array(reinterpret_cast<uint8_t *>(data), len));
 
     return true;
 }
@@ -196,6 +202,6 @@ bool SHTC3::check_crc(const char *data, size_t len) {
         }
     }
 
-    tr_info("Checksum OK");
+    tr_debug("Checksum OK");
     return true;
 }
