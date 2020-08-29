@@ -30,7 +30,19 @@ int main() {
         ThisThread::sleep_for(2s);
     }
 }
+
 ```
+> If you don't see float numbers in the console output, you need to turn on the support of float for printf
+> ```json
+> {
+>   "target_overrides": {
+>     "*": {
+>       "platform.minimal-printf-enable-floating-point": true,
+>       "platform.minimal-printf-set-floating-point-max-decimals": 6
+>     }
+>   }
+> }
+> ```
 
 ## Example passing I2C object
 ```cpp
