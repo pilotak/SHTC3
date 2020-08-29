@@ -41,10 +41,9 @@ class SHTC3 {
     bool init(I2C *i2c_obj = nullptr);
     bool read(uint16_t &temp, uint16_t &humidity, bool low_power = false);
     void reset();
-    void set_low_power(bool on);
-    float to_c(uint16_t raw);
-    float to_f(uint16_t raw);
-    float to_rh(uint16_t raw);
+    float toCelsius(uint16_t raw);
+    float toFahrenheit(uint16_t raw);
+    float toPercentage(uint16_t raw);
 
   private:
     typedef enum {
@@ -56,9 +55,9 @@ class SHTC3 {
         CMD_MEASUREMENT_LOW_POWER = 0x401A,
     } shtc3_cmd_t;
 
-    bool send_cmd(shtc3_cmd_t cmd);
-    bool check_crc(const char *data, size_t len);
-    bool get_data(char *data, size_t len);
+    bool sendCmd(shtc3_cmd_t cmd);
+    bool checkCRC(const char *data, size_t len);
+    bool getData(char *data, size_t len);
 
     I2C *_i2c;
     uint32_t _i2c_obj[sizeof(I2C) / sizeof(uint32_t)] = {0};

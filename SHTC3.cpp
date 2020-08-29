@@ -46,25 +46,25 @@ bool SHTC3::init(I2C *i2c_obj) {
     tr_debug("Init");
 
     // wakeup
-    if (!send_cmd(CMD_WAKEUP)) {
+    if (!sendCmd(CMD_WAKEUP)) {
         return false;
     }
 
     wait_us(240);
 
     // request ID
-    if (!send_cmd(CMD_READ_ID)) {
+    if (!sendCmd(CMD_READ_ID)) {
         return false;
     }
 
     // read ID
-    if (!get_data(data, sizeof(data))) {
+    if (!getData(data, sizeof(data))) {
         tr_error("Read ID failed");
         return false;
     }
 
     // check CRC
-    if (!check_crc(data, 3)) {
+    if (!checkCRC(data, 3)) {
         return false;
     }
 
@@ -76,7 +76,7 @@ bool SHTC3::init(I2C *i2c_obj) {
 
     tr_info("SHTC3 ID: %04X", data[0] | data[1]);
 
-    return send_cmd(CMD_SLEEP);
+    return sendCmd(CMD_SLEEP);
 }
 
 bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
@@ -85,7 +85,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     char data[6];
 
     // wakeup
-    if (!send_cmd(CMD_WAKEUP)) {
+    if (!sendCmd(CMD_WAKEUP)) {
         return false;
     }
 
@@ -94,7 +94,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     // request measurement
     shtc3_cmd_t cmd = (low_power ? CMD_MEASUREMENT_LOW_POWER : CMD_MEASUREMENT_NORMAL);
 
-    if (!send_cmd(cmd)) {
+    if (!sendCmd(cmd)) {
         goto END;
     }
 
@@ -104,7 +104,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
 
     // read results
     for (; i < MBED_CONF_SHTC3_TIMEOUT; i++) { // safety timeout
-        if (get_data(data, sizeof(data))) {
+        if (getData(data, sizeof(data))) {
             break;
 
         } else {
@@ -120,7 +120,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     tr_debug("Measuring took %ums", i);
 
     // check CRC
-    if (!check_crc(data, 6)) {
+    if (!checkCRC(data, sizeof(data))) {
         goto END;
     }
 
@@ -131,28 +131,28 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
 
 END:
     // sleep now
-    send_cmd(CMD_SLEEP);
+    sendCmd(CMD_SLEEP);
     return ret;
 }
 
-float SHTC3::to_c(uint16_t raw) {
-    return 175.0 * (raw / 65536.0) - 45.0;
+float SHTC3::toCelsius(uint16_t raw) {
+    return 175.0 * ((float)raw / 65536.0) - 45.0;
 }
 
-float SHTC3::to_f(uint16_t raw) {
-    return to_c(raw) * 9.0 / 5.0 + 32.0;
+float SHTC3::toFahrenheit(uint16_t raw) {
+    return toCelsius(raw) * 9.0 / 5.0 + 32.0;
 }
 
-float SHTC3::to_rh(uint16_t raw) {
-    return 100.0 * (raw / 65536.0);
+float SHTC3::toPercentage(uint16_t raw) {
+    return 100.0 * ((float)raw / 65536.0);
 }
 
 void SHTC3::reset() {
-    send_cmd(CMD_RESET);
+    sendCmd(CMD_RESET);
     wait_us(240);
 }
 
-bool SHTC3::send_cmd(shtc3_cmd_t cmd) {
+bool SHTC3::sendCmd(shtc3_cmd_t cmd) {
     tr_debug("Sending CMD: %04X", (uint16_t)cmd);
     char data[2];
     data[0] = (uint16_t)cmd >> 8;
@@ -172,7 +172,7 @@ bool SHTC3::send_cmd(shtc3_cmd_t cmd) {
     return true;
 }
 
-bool SHTC3::get_data(char *data, size_t len) {
+bool SHTC3::getData(char *data, size_t len) {
     int ack = -1;
 
     _i2c->lock();
@@ -188,7 +188,7 @@ bool SHTC3::get_data(char *data, size_t len) {
     return true;
 }
 
-bool SHTC3::check_crc(const char *data, size_t len) {
+bool SHTC3::checkCRC(const char *data, size_t len) {
     //MBED_STATIC_ASSERT(len % 3, "Data len must be divideable by 3");
     MbedCRC<0x31, 8> checksum(0xFF, 0x00, false, false);
     uint32_t crc = 0;
