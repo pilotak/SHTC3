@@ -38,11 +38,52 @@ class SHTC3 {
     SHTC3(PinName sda, PinName scl, uint32_t frequency = 400000);
     ~SHTC3(void);
 
+    /**
+     * @brief Initialize communication with sensor
+     *
+     * @param i2c_obj pass I2C object if you didn't specify pins in constructor
+     * @return true if success; false otherwise
+     */
     bool init(I2C *i2c_obj = nullptr);
+
+    /**
+     * @brief Read sensor values
+     *
+     * @param temp reference where to copy the result
+     * @param humidity reference where to copy the result
+     * @param low_power whether the sensor should work in low power mode
+     * @return true if success; false otherwise
+     */
     bool read(uint16_t &temp, uint16_t &humidity, bool low_power = false);
+
+    /**
+     * @brief Software reset
+     *
+     */
     void reset();
+
+    /**
+     * @brief Convert the result to human readable format
+     *
+     * @param raw result from .read()
+     * @return float temperature in celsius
+     */
     float toCelsius(uint16_t raw);
+
+    /**
+     * @brief Convert the result to human readable format
+     *
+     * @param raw result from .read()
+     * @return float temperature in fahrenheit
+     */
     float toFahrenheit(uint16_t raw);
+
+    /**
+     * @brief Convert the result to human readable format
+     *
+     * @param raw result from .read()
+     * @return float relative humidity in percentage
+     */
     float toPercentage(uint16_t raw);
 
   private:
@@ -55,8 +96,30 @@ class SHTC3 {
         CMD_MEASUREMENT_LOW_POWER = 0x401A,
     } shtc3_cmd_t;
 
+    /**
+     * @brief Send command to sensor
+     *
+     * @param cmd
+     * @return true if ACK; false otherwise (NOACK)
+     */
     bool sendCmd(shtc3_cmd_t cmd);
+
+    /**
+     * @brief Check CRC of data packet
+     *
+     * @param data first two bytes are data, third is computed checksum by the sensor
+     * @param len lenght is data buffer
+     * @return true if success; false otherwise
+     */
     bool checkCRC(const char *data, size_t len);
+
+    /**
+     * @brief Get data from sensor
+     *
+     * @param data pointer where to store the result
+     * @param len how many bytes to read
+     * @return true if ACK; false otherwise (NOACK)
+     */
     bool getData(char *data, size_t len);
 
     I2C *_i2c;
