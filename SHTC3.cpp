@@ -20,18 +20,21 @@ SOFTWARE.
 
 #include "SHTC3.h"
 
+SHTC3::SHTC3() {
+}
+
 SHTC3::SHTC3(PinName sda, PinName scl, uint32_t frequency) {
     _i2c = new (_i2c_obj) I2C(sda, scl);
     _i2c->frequency(frequency);
 }
 
 SHTC3::~SHTC3(void) {
-    if (_i2c == reinterpret_cast<I2C*>(_i2c_obj)) {
+    if (_i2c == reinterpret_cast<I2C *>(_i2c_obj)) {
         _i2c->~I2C();
     }
 }
 
-bool SHTC3::init(I2C * i2c_obj) {
+bool SHTC3::init(I2C *i2c_obj) {
     char data[3];
 
     if (i2c_obj != nullptr) {
@@ -98,6 +101,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     for (; i < MBED_CONF_SHTC3_TIMEOUT; i++) { // safety timeout
         if (get_data(data, sizeof(data))) {
             break;
+
         } else {
             ThisThread::sleep_for(1ms);
         }

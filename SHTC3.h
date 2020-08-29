@@ -27,42 +27,42 @@ using namespace std::chrono;
 
 #include "mbed-trace/mbed_trace.h"
 #ifndef TRACE_GROUP
-#define TRACE_GROUP  "SHTC"
+    #define TRACE_GROUP  "SHTC"
 #endif
 
 #define SHTC3_ADDRESS (0x70<<1)
 
 class SHTC3 {
   public:
-	SHTC3();
-	SHTC3(PinName sda, PinName scl, uint32_t frequency = 400000);
-	~SHTC3(void);
+    SHTC3();
+    SHTC3(PinName sda, PinName scl, uint32_t frequency = 400000);
+    ~SHTC3(void);
 
-	bool init(I2C * i2c_obj = nullptr);
-	bool read(uint16_t &temp, uint16_t &humidity, bool low_power = false);
-	void reset();
-	void set_low_power(bool on);
-	float to_c(uint16_t raw);
-	float to_f(uint16_t raw);
-	float to_rh(uint16_t raw);
+    bool init(I2C *i2c_obj = nullptr);
+    bool read(uint16_t &temp, uint16_t &humidity, bool low_power = false);
+    void reset();
+    void set_low_power(bool on);
+    float to_c(uint16_t raw);
+    float to_f(uint16_t raw);
+    float to_rh(uint16_t raw);
 
   private:
-	typedef enum {
-		CMD_WAKEUP = 0x3517,
-		CMD_RESET = 0x805D,
-		CMD_SLEEP = 0xB098,
-		CMD_READ_ID = 0xEFC8,
-		CMD_MEASUREMENT_NORMAL = 0x58E0,
-		CMD_MEASUREMENT_LOW_POWER = 0x401A,
-	} shtc3_cmd_t;
+    typedef enum {
+        CMD_WAKEUP = 0x3517,
+        CMD_RESET = 0x805D,
+        CMD_SLEEP = 0xB098,
+        CMD_READ_ID = 0xEFC8,
+        CMD_MEASUREMENT_NORMAL = 0x58E0,
+        CMD_MEASUREMENT_LOW_POWER = 0x401A,
+    } shtc3_cmd_t;
 
-	bool send_cmd(shtc3_cmd_t cmd);
-	bool check_crc(const char *data, size_t len);
-	bool get_data(char *data, size_t len);
+    bool send_cmd(shtc3_cmd_t cmd);
+    bool check_crc(const char *data, size_t len);
+    bool get_data(char *data, size_t len);
 
-	I2C *_i2c;
-	uint32_t _i2c_obj[sizeof(I2C) / sizeof(uint32_t)] = {0};
-	bool _clock_streching = false;
+    I2C *_i2c;
+    uint32_t _i2c_obj[sizeof(I2C) / sizeof(uint32_t)] = {0};
+    bool _clock_streching = false;
 };
 
 #endif  // SHTC3_H
