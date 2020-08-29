@@ -79,7 +79,7 @@ bool SHTC3::init(I2C *i2c_obj) {
     return sendCmd(CMD_SLEEP);
 }
 
-bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
+bool SHTC3::read(uint16_t *temp, uint16_t *humidity, bool low_power) {
     bool ret = false;
     uint8_t i = 0;
     char data[6];
@@ -126,8 +126,14 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
 
     // if we reached up to here, it's a success
     ret = true;
-    humidity = (data[0] << 8) | data[1];
-    temp = (data[3] << 8) | data[4];
+
+    if (humidity) {
+        *humidity = (data[0] << 8) | data[1];
+    }
+
+    if (temp) {
+        *temp = (data[3] << 8) | data[4];
+    }
 
 END:
     // sleep now

@@ -19,7 +19,7 @@ int main() {
     while (1) {
         uint16_t raw_temp, raw_humidity;
 
-        if (sht.read(raw_temp, raw_humidity)) {
+        if (sht.read(&raw_temp, &raw_humidity)) {
             printf("Temperature: %f*C (%u), humidity: %f%% (%u)\n", sht.toCelsius(raw_temp), raw_temp,
                    sht.toPercentage(raw_humidity), raw_humidity);
 
@@ -61,7 +61,7 @@ int main() {
     while (1) {
         uint16_t raw_temp, raw_humidity;
 
-        if (sht.read(raw_temp, raw_humidity)) {
+        if (sht.read(&raw_temp, &raw_humidity)) {
             printf("Temperature: %f*C (%u), humidity: %f%% (%u)\n", sht.toCelsius(raw_temp), raw_temp,
                    sht.toPercentage(raw_humidity), raw_humidity);
 

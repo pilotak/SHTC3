@@ -49,12 +49,12 @@ class SHTC3 {
     /**
      * @brief Read sensor values
      *
-     * @param temp reference where to copy the result
-     * @param humidity reference where to copy the result
+     * @param temp pointer where to copy the result
+     * @param humidity pointer where to copy the result
      * @param low_power whether the sensor should work in low power mode
      * @return true if success; false otherwise
      */
-    bool read(uint16_t &temp, uint16_t &humidity, bool low_power = false);
+    bool read(uint16_t *temp, uint16_t *humidity, bool low_power = false);
 
     /**
      * @brief Software reset
