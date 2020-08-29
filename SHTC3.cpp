@@ -99,7 +99,7 @@ bool SHTC3::read(uint16_t &temp, uint16_t &humidity, bool low_power) {
     }
 
     if (!low_power) {
-        ThisThread::sleep_for(10ms);
+        ThisThread::sleep_for(10ms); // "normal" measuring time is 10-12ms
     }
 
     // read results

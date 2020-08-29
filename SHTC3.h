@@ -61,7 +61,6 @@ class SHTC3 {
 
     I2C *_i2c;
     uint32_t _i2c_obj[sizeof(I2C) / sizeof(uint32_t)] = {0};
-    bool _clock_streching = false;
 };
 
 #endif  // SHTC3_H
