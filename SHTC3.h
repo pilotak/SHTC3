@@ -30,12 +30,12 @@ using namespace std::chrono;
     #define TRACE_GROUP  "SHTC"
 #endif
 
-#define SHTC3_ADDRESS (0x70<<1)
+#define SHTC3_ADDRESS (0x70 << 1)
 
 class SHTC3 {
   public:
-    SHTC3();
-    SHTC3(PinName sda, PinName scl, uint32_t frequency = 400000);
+    SHTC3(int8_t address = SHTC3_ADDRESS);
+    SHTC3(PinName sda, PinName scl, int8_t address = SHTC3_ADDRESS, uint32_t frequency = 400000);
     ~SHTC3(void);
 
     /**
@@ -124,6 +124,7 @@ class SHTC3 {
 
     I2C *_i2c;
     uint32_t _i2c_obj[sizeof(I2C) / sizeof(uint32_t)] = {0};
+    const int8_t _address = SHTC3_ADDRESS;
 };
 
 #endif  // SHTC3_H

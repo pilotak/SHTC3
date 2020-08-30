@@ -20,10 +20,12 @@ SOFTWARE.
 
 #include "SHTC3.h"
 
-SHTC3::SHTC3() {
+SHTC3::SHTC3(int8_t address):
+    _address(address) {
 }
 
-SHTC3::SHTC3(PinName sda, PinName scl, uint32_t frequency) {
+SHTC3::SHTC3(PinName sda, PinName scl, int8_t address, uint32_t frequency):
+    _address(address) {
     _i2c = new (_i2c_obj) I2C(sda, scl);
     _i2c->frequency(frequency);
 }
@@ -167,7 +169,7 @@ bool SHTC3::sendCmd(shtc3_cmd_t cmd) {
     int ack = -1;
 
     _i2c->lock();
-    ack = _i2c->write(SHTC3_ADDRESS, data, sizeof(data));
+    ack = _i2c->write(_address, data, sizeof(data));
     _i2c->unlock();
 
     if (ack != 0) {
@@ -182,14 +184,14 @@ bool SHTC3::getData(char *data, size_t len) {
     int ack = -1;
 
     _i2c->lock();
-    ack = _i2c->read(SHTC3_ADDRESS, data, len);
+    ack = _i2c->read(_address, data, len);
     _i2c->unlock();
 
     if (ack != 0) {
         return false;
     }
 
-    tr_debug("Read data(%u): %s", len, tr_array(reinterpret_cast<uint8_t *>(data), len));
+    tr_debug("Read data[%u]: %s", len, tr_array(reinterpret_cast<uint8_t *>(data), len));
 
     return true;
 }
