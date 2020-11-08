@@ -144,7 +144,7 @@ END:
 }
 
 float SHTC3::toCelsius(uint16_t raw) {
-    return 175.0 * ((float)raw / 65536.0) - 45.0;
+    return 175.0 * ((float)raw / 65535.0) - 45.0;
 }
 
 float SHTC3::toFahrenheit(uint16_t raw) {
@@ -152,7 +152,7 @@ float SHTC3::toFahrenheit(uint16_t raw) {
 }
 
 float SHTC3::toPercentage(uint16_t raw) {
-    return 100.0 * ((float)raw / 65536.0);
+    return 100.0 * ((float)raw / 65535.0);
 }
 
 void SHTC3::reset() {
